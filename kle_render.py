@@ -1,7 +1,9 @@
+import config
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 from multiprocessing.dummy import Pool as ThreadPool
 from key import Key
 import copy, html, re, json
+import socket
 
 border = 24
 keyboard = None
@@ -50,7 +52,7 @@ def render_key(key):
 
 def watermark(img):
     global max_x, max_y
-    text = 'Made with kle-render.herokuapp.com'
+    text = 'Made with ' + config.HOST_NAME
     margin = 5
     c1 = ImageColor.getrgb('#202020')
     c2 = ImageColor.getrgb('#E0E0E0')
@@ -63,6 +65,12 @@ def watermark(img):
 
     draw.rectangle((0, max_y-h-margin*2, max_x+1, max_y+1), fill=c1)
     draw.text((margin, max_y-h-margin), text, font=font, fill=c2)
+
+
+    if config.SIGNATURE:
+        text = config.SIGNATURE
+        w, h = font.getsize(text)
+        draw.text((max_x-w-margin, max_y-h-margin), text, font=font, fill=c2)
 
     return img
 
